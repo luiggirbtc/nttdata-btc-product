@@ -4,9 +4,16 @@ import com.nttdata.btc.product.app.model.request.ProductRequest;
 import com.nttdata.btc.product.app.model.request.UpdateProductRequest;
 import com.nttdata.btc.product.app.model.response.ProductResponse;
 import com.nttdata.btc.product.app.service.ProductService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
@@ -20,6 +27,7 @@ import reactor.core.publisher.Mono;
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/product")
+@Tag(name = "Product", description = "Service product")
 public class ProductController {
 
     /**
@@ -34,7 +42,14 @@ public class ProductController {
      * @param id {@link String}
      * @return {@link ProductResponse}
      */
-    @GetMapping("id/{id}")
+    @Operation(summary = "Get a product by id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Found product",
+                    content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ProductResponse.class))}),
+            @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Not found", content = @Content)})
+    @GetMapping(value = "id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<ProductResponse>> findById(@PathVariable final String id) {
         return service.findById(id)
                 .map(c -> new ResponseEntity<>(c, HttpStatus.OK))
@@ -42,12 +57,19 @@ public class ProductController {
     }
 
     /**
-     * Service create customer.
+     * Service create product.
      *
      * @param request {@link ProductRequest}
      * @return {@link ProductResponse}
      */
-    @PostMapping("/")
+    @Operation(summary = "Create a new product")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok",
+                    content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ProductResponse.class))}),
+            @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)})
+    @PostMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<ProductResponse>> createProduct(@RequestBody final ProductRequest request) {
         log.info("Start CreateProduct.");
         return service.save(request)
@@ -61,7 +83,14 @@ public class ProductController {
      * @param request {@link UpdateProductRequest}
      * @return {@link ProductResponse}
      */
-    @PutMapping("/")
+    @Operation(summary = "Update product")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok",
+                    content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ProductResponse.class))}),
+            @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)})
+    @PutMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<ProductResponse>> updateProduct(@RequestBody final UpdateProductRequest request) {
         log.info("Start UpdateProduct.");
         return service.update(request)
@@ -74,7 +103,14 @@ public class ProductController {
      *
      * @return {@link ProductResponse}
      */
-    @GetMapping("/")
+    @Operation(summary = "Get all products")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok",
+                    content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ProductResponse.class))}),
+            @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)})
+    @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
     public Flux<ProductResponse> findAll() {
         log.info("Start findAll Products.");
         return service.findAll()
@@ -87,6 +123,13 @@ public class ProductController {
      * @param id {@link String}
      * @return {@link Void}
      */
+    @Operation(summary = "Delete product")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok",
+                    content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = Void.class))}),
+            @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)})
     @DeleteMapping("/{id}")
     public Mono<ResponseEntity<Void>> deleteProduct(@PathVariable(value = "id") final String id) {
         return service.delete(id)

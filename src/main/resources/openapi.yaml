@@ -1,0 +1,276 @@
+openapi: 3.0.1
+info:
+  title: OpenAPI definition
+  version: v0
+servers:
+  - url: http://localhost:8084
+    description: Generated server url
+tags:
+  - name: Product
+    description: Service product
+paths:
+  /api/v1/product/:
+    get:
+      tags:
+        - Product
+      summary: Get all products
+      operationId: findAll
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductResponse'
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal Server Error
+    put:
+      tags:
+        - Product
+      summary: Update product
+      operationId: updateProduct
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProductRequest'
+        required: true
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductResponse'
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal Server Error
+    post:
+      tags:
+        - Product
+      summary: Create a new product
+      operationId: createProduct
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductRequest'
+        required: true
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductResponse'
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal Server Error
+  /api/v1/product/id/{id}:
+    get:
+      tags:
+        - Product
+      summary: Get a product by id
+      operationId: findById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Found product
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductResponse'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not found
+  /api/v1/product/{id}:
+    delete:
+      tags:
+        - Product
+      summary: Delete product
+      operationId: deleteProduct
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json: {}
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal Server Error
+components:
+  schemas:
+    UpdateProductRequest:
+      required:
+        - category
+        - id_product
+        - name
+        - type
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name product
+          example: Ahorro
+        type:
+          type: string
+          description: Type product
+          example: 1 = ahorro | 2 = corriente | 3 = plazo fijo | 4 = credito personal | 5 = credito empresarial | 6 = tarjeta credito personal o empresarial
+        type_description:
+          type: string
+          description: Description product
+          example: Ahorro
+        category:
+          type: string
+          description: Category
+          example: 1 = pasivo | 2 = activo
+        category_description:
+          type: string
+          description: Category product
+          example: Pasivo
+        description:
+          type: string
+          description: Description product
+          example: Libre de comisión por mantenimiento
+        statement_fee:
+          type: number
+          description: product statement fee
+          format: double
+          example: 0
+        statement_transaction:
+          type: number
+          description: product statement transaction
+          format: double
+          example: 0
+        max_operations:
+          type: integer
+          description: max operations
+          format: int32
+          example: 250
+        id_product:
+          type: string
+          description: Id product
+          example: 120cf999662f294fc1234567
+    ProductResponse:
+      required:
+        - category
+        - name
+        - registerDate
+        - status
+        - type
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name product
+          example: Ahorro
+        type:
+          type: string
+          description: Type product
+          example: 1 = ahorro | 2 = corriente | 3 = plazo fijo | 4 = credito personal | 5 = credito empresarial | 6 = tarjeta credito personal o empresarial
+        type_description:
+          type: string
+          description: Description product
+          example: Ahorro
+        category:
+          type: string
+          description: Category
+          example: 1 = pasivo | 2 = activo
+        category_description:
+          type: string
+          description: Category product
+          example: Pasivo
+        description:
+          type: string
+          description: Description product
+          example: Libre de comisión por mantenimiento
+        statement_fee:
+          type: number
+          description: product statement fee
+          format: double
+          example: 0
+        statement_transaction:
+          type: number
+          description: product statement transaction
+          format: double
+          example: 0
+        max_operations:
+          type: integer
+          description: max operations
+          format: int32
+          example: 250
+        id_product:
+          type: string
+          description: Id product
+          example: 120cf999662f294fc1234567
+        registerDate:
+          type: string
+          description: Register date
+          format: date-time
+          example: '2023-03-11T21:58:49.101Z'
+        status:
+          type: boolean
+          description: Status product
+          example: true
+    ProductRequest:
+      required:
+        - category
+        - name
+        - type
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name product
+          example: Ahorro
+        type:
+          type: string
+          description: Type product
+          example: 1 = ahorro | 2 = corriente | 3 = plazo fijo | 4 = credito personal | 5 = credito empresarial | 6 = tarjeta credito personal o empresarial
+        type_description:
+          type: string
+          description: Description product
+          example: Ahorro
+        category:
+          type: string
+          description: Category
+          example: 1 = pasivo | 2 = activo
+        category_description:
+          type: string
+          description: Category product
+          example: Pasivo
+        description:
+          type: string
+          description: Description product
+          example: Libre de comisión por mantenimiento
+        statement_fee:
+          type: number
+          description: product statement fee
+          format: double
+          example: 0
+        statement_transaction:
+          type: number
+          description: product statement transaction
+          format: double
+          example: 0
+        max_operations:
+          type: integer
+          description: max operations
+          format: int32
+          example: 250
