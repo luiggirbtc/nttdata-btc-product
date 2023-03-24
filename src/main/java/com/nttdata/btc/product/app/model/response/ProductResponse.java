@@ -1,11 +1,15 @@
 package com.nttdata.btc.product.app.model.response;
 
 import com.nttdata.btc.product.app.model.request.BaseRequest;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.Date;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 /**
  * Response bean ProductResponse.
