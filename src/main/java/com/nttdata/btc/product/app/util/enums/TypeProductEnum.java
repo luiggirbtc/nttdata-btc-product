@@ -10,10 +10,10 @@ import java.util.Arrays;
 public enum TypeProductEnum {
     AHORRO(1, "Ahorro", 1),
     CUENTA_CORRIENTE(2, "Cuenta corriente", 1),
-    PLAZO_FIJO(3, "Cuenta corriente", 1),
-    PERSONAL(4, "Cuenta corriente", 2),
-    EMPRESARIAL(5, "Cuenta corriente", 2),
-    TARJETA_CREDITO(6, "Cuenta corriente", 2);
+    PLAZO_FIJO(3, "Plazo fijo", 1),
+    PERSONAL(4, "Personal", 2),
+    EMPRESARIAL(5, "Empresarial", 2),
+    TARJETA_CREDITO(6, "Tarjeta de crédito personal/empresarial", 2);
 
     private int code;
     private String description;

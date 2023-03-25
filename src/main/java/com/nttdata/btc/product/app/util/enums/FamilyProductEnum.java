@@ -27,7 +27,7 @@ public enum FamilyProductEnum {
      */
     public static FamilyProductEnum findFamily(Integer code) {
         return Arrays.stream(FamilyProductEnum.values())
-                .filter(e -> e.code == code).findFirst()
+                .filter(e -> e.code.equals(code)).findFirst()
                 .orElse(null);
     }
 }
