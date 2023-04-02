@@ -12,7 +12,9 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -43,7 +45,8 @@ public class ProductServiceImpl implements ProductService {
     public Flux<ProductResponse> findAll() {
         return repository.findAll().filter(Product::isStatus)
                 .map(c -> buildProductR.apply(c))
-                .onErrorReturn(new ProductResponse());
+                .onErrorResume(e -> Flux.error(customException(HttpStatus.INTERNAL_SERVER_ERROR,
+                        HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase())));
     }
 
     /**
@@ -57,7 +60,8 @@ public class ProductServiceImpl implements ProductService {
         return repository.findById(id)
                 .filter(Product::isStatus)
                 .map(e -> buildProductR.apply(e))
-                .onErrorReturn(new ProductResponse());
+                .onErrorResume(e -> Mono.error(customException(HttpStatus.BAD_REQUEST,
+                        HttpStatus.BAD_REQUEST.getReasonPhrase())));
     }
 
     /**
@@ -70,7 +74,8 @@ public class ProductServiceImpl implements ProductService {
     public Mono<ProductResponse> save(ProductRequest request) {
         return repository.save(buildProduct.apply(request))
                 .flatMap(entity -> Mono.just(buildProductR.apply(entity)))
-                .onErrorReturn(new ProductResponse());
+                .onErrorResume(e -> Mono.error(customException(HttpStatus.BAD_REQUEST,
+                        HttpStatus.BAD_REQUEST.getReasonPhrase())));
     }
 
     /**
@@ -83,7 +88,7 @@ public class ProductServiceImpl implements ProductService {
     public Mono<Void> delete(String id) {
         return repository.findById(id).filter(Product::isStatus)
                 .map(e -> updateStatus.apply(e, DEFAULT_FALSE))
-                .flatMap(e -> repository.delete(e));
+                .flatMap(e -> repository.save(e)).then();
     }
 
     /**
@@ -98,7 +103,8 @@ public class ProductServiceImpl implements ProductService {
                 .map(entity -> updateProduct.apply(request, entity))
                 .flatMap(product -> repository.save(product))
                 .flatMap(pupdated -> Mono.just(buildProductR.apply(pupdated)))
-                .onErrorReturn(new ProductResponse());
+                .onErrorResume(e -> Mono.error(customException(HttpStatus.INTERNAL_SERVER_ERROR,
+                        HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase())));
     }
 
     /**
@@ -149,4 +155,15 @@ public class ProductServiceImpl implements ProductService {
         response.setStatus(entity.isStatus());
         return response;
     };
+
+    /**
+     * Method CUSTOM exception.
+     *
+     * @param status  {@link HttpStatus}
+     * @param message {@link String}
+     * @return {@link ResponseStatusException}
+     */
+    private ResponseStatusException customException(HttpStatus status, String message) {
+        return new ResponseStatusException(status, message);
+    }
 }
